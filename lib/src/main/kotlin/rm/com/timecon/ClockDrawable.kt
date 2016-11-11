@@ -1,6 +1,6 @@
 package rm.com.timecon
 
-import android.content.Context
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.drawable.Animatable
@@ -9,18 +9,12 @@ import android.graphics.drawable.Drawable
 /**
  * Created by alex
  */
-class ClockDrawable(ctx: Context) : Drawable(), Animatable {
+class ClockDrawable(res: Resources) : Drawable(), Animatable {
 
-  val frame = smoothLinePaint()
-  val pointers = smoothLinePaint()
-
+  /**
+   * defines whether this should draw a ring around the pointers
+   */
   var hasFrame = true
-
-  var absMinutes: Int = 0
-    set(value) {
-      minutes = field % 60
-      hours = Math.round(field.toFloat() / 60F)
-    }
 
   var hours = 0
     set(value) {
@@ -34,14 +28,33 @@ class ClockDrawable(ctx: Context) : Drawable(), Animatable {
       invalidateSelf()
     }
 
+  private val frame = smoothLinePaint()
+  private val pointers = smoothLinePaint()
+
   private val hoursAngle: Float
     get() = 30F * hours.toFloat() + minutes.toFloat() / 2F
 
   private val minutesAngle: Float
     get() = 6F * minutes.toFloat()
 
+  private val centerX: Float get() = bounds.exactCenterX()
+
+  private val centerY: Float get() = bounds.exactCenterY()
+
+  /**
+   * you can increment & decrement this however you want
+   * you can even make this negative, it'll still gonna show you the right result
+   *
+   * it's here for indeterminate animation
+   */
+  private var absMinutes: Int = 0
+    set(value) {
+      minutes = field % 60
+      hours = field.floorDiv(60)
+    }
+
   override fun draw(canvas: Canvas?) {
-    TODO()
+    canvas ?: return
   }
 
   override fun setAlpha(alpha: Int) {

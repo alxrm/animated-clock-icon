@@ -1,6 +1,7 @@
 package rm.com.timecon
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -11,8 +12,9 @@ import android.view.View
  * Created by alex
  */
 
-internal fun Context.dip(value: Int): Int = (value * resources.displayMetrics.density).toInt()
-internal fun View.dip(value: Int): Int = context.dip(value)
+internal fun Resources.dip(value: Int): Int = (value * displayMetrics.density).toInt()
+internal fun Context.dip(value: Int): Int = resources.dip(value)
+internal fun View.dip(value: Int): Int = resources.dip(value)
 
 internal fun smoothPaint(paintColor: Int = Color.WHITE): Paint =
     Paint().apply {

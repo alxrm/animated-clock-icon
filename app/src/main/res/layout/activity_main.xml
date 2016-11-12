@@ -9,10 +9,14 @@
 	android:paddingLeft="@dimen/activity_horizontal_margin"
 	android:paddingRight="@dimen/activity_horizontal_margin"
 	android:paddingTop="@dimen/activity_vertical_margin"
+	android:background="@color/colorPrimaryDark"
 	tools:context="rm.com.timecon.MainActivity">
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Hello World!"/>
+	<ImageView
+		android:id="@+id/clocks"
+		android:layout_width="92dp"
+		android:layout_height="92dp"
+		android:layout_centerInParent="true"
+		/>
+
 </RelativeLayout>

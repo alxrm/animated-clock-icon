@@ -1,4 +1,4 @@
-package rm.com.timecon
+package rm.com.clocks
 
 import android.content.Context
 import android.content.res.Resources
@@ -34,6 +34,12 @@ internal inline fun Canvas.transform(crossinline init: Canvas.() -> Unit) {
   save()
   init()
   restore()
+}
+
+internal fun Canvas.drawLineWithAngle(fromX: Float, fromY: Float, angleDegrees: Float, length: Float, paint: Paint) {
+  val (endX, endY) = angleDegrees.radiusOf(fromX, fromY, length)
+
+  drawLine(fromX, fromY, endX, endY, paint)
 }
 
 internal fun rectFOf(left: Int, top: Int, right: Int, bottom: Int) = RectF(

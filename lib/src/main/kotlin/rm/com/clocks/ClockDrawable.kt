@@ -1,6 +1,6 @@
-package rm.com.timecon
+package rm.com.clocks
 
-import android.content.res.Resources
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.drawable.Animatable
@@ -9,7 +9,7 @@ import android.graphics.drawable.Drawable
 /**
  * Created by alex
  */
-class ClockDrawable(res: Resources) : Drawable(), Animatable {
+class ClockDrawable(ctx: Context) : Drawable(), Animatable {
 
   /**
    * defines whether this should draw a ring around the pointers
@@ -28,33 +28,42 @@ class ClockDrawable(res: Resources) : Drawable(), Animatable {
       invalidateSelf()
     }
 
-  private val frame = smoothLinePaint()
-  private val pointers = smoothLinePaint()
+  private val frame = smoothLinePaint().apply { strokeWidth = ctx.dip(1).toFloat() }
+  private val pointers = smoothLinePaint().apply { strokeWidth = ctx.dip(1).toFloat() }
 
   private val hoursAngle: Float
-    get() = 30F * hours.toFloat() + minutes.toFloat() / 2F
+    get() = 30F * hours.toFloat() + minutes.toFloat() / 2F - 90
 
   private val minutesAngle: Float
-    get() = 6F * minutes.toFloat()
+    get() = 6F * minutes.toFloat() - 90
 
   private val centerX: Float get() = bounds.exactCenterX()
-
   private val centerY: Float get() = bounds.exactCenterY()
 
-  /**
-   * you can increment & decrement this however you want
-   * you can even make this negative, it'll still gonna show you the right result
-   *
-   * it's here for indeterminate animation
-   */
-  private var absMinutes: Int = 0
+  private val width: Float get() = bounds.width().toFloat()
+  private val height: Float get() = bounds.height().toFloat()
+
+  private val frameRadius: Float get() = width / 2 - frame.strokeWidth
+  private val minutesRadius: Float get() = frameRadius - frame.strokeWidth * 3
+  private val hoursRadius: Float get() = frameRadius / 2
+
+  private var absMinutes: Float = 0F
     set(value) {
-      minutes = field % 60
-      hours = field.floorDiv(60)
+      field = value
+
+      minutes = (field % 60).toInt()
+      hours = field.toInt().floorDiv(60)
     }
 
   override fun draw(canvas: Canvas?) {
     canvas ?: return
+
+    if (hasFrame) {
+      canvas.drawCircle(centerX, centerY, frameRadius, frame)
+    }
+
+    canvas.drawLineWithAngle(centerX, centerY, minutesAngle, minutesRadius, pointers)
+    canvas.drawLineWithAngle(centerX, centerY, hoursAngle, hoursRadius, pointers)
   }
 
   override fun setAlpha(alpha: Int) {
@@ -80,4 +89,5 @@ class ClockDrawable(res: Resources) : Drawable(), Animatable {
   override fun stop() {
     TODO()
   }
+
 }

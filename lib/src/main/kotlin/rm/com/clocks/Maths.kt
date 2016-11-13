@@ -18,5 +18,5 @@ fun cosOfDeg(degrees: Float) = Math.cos(degrees.toRad()).toFloat()
 
 fun sinOfDeg(degrees: Float) = Math.sin(degrees.toRad()).toFloat()
 
-fun Float.radiusOf(startX: Float, startY: Float, len: Float) =
+fun Float.endsOf(startX: Float, startY: Float, len: Float) =
     (len * cosOfDeg(this) + startX) to (len * sinOfDeg(this) + startY)

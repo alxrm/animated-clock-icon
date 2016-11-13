@@ -5,7 +5,6 @@ import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import android.view.View
 
 /**
@@ -29,27 +28,14 @@ internal fun smoothLinePaint(paintColor: Int = Color.WHITE): Paint =
       strokeJoin = Paint.Join.ROUND
     }
 
-
-internal inline fun Canvas.transform(crossinline init: Canvas.() -> Unit) {
-  save()
-  init()
-  restore()
-}
-
 internal fun Canvas.drawLineWithAngle(fromX: Float, fromY: Float, angleDegrees: Float, length: Float, paint: Paint) {
-  val (endX, endY) = angleDegrees.radiusOf(fromX, fromY, length)
+  val (endX, endY) = angleDegrees.endsOf(fromX, fromY, length)
 
   drawLine(fromX, fromY, endX, endY, paint)
 }
-
-internal fun rectFOf(left: Int, top: Int, right: Int, bottom: Int) = RectF(
-    left.toFloat()
-    , top.toFloat()
-    , right.toFloat()
-    , bottom.toFloat()
-)
 
 internal fun Int.withAlpha(alpha: Int): Int {
   require(alpha in 0x00..0xFF)
   return this and 0x00FFFFFF or (alpha shl 24)
 }
+

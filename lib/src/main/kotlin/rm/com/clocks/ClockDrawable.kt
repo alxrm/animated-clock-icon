@@ -1,51 +1,97 @@
 package rm.com.clocks
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
+import android.view.animation.OvershootInterpolator
 
 /**
  * Created by alex
  */
-class ClockDrawable(ctx: Context) : Drawable(), Animatable {
+
+enum class Stroke { THIN, LIGHT, REGULAR, BOLD }
+
+class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
 
   /**
    * defines whether this should draw a ring around the pointers
    */
   var hasFrame = true
 
-  var hours = 0
+  private var _minutes = 0
+  private var _hours = 0
+
+  var minutes: Int
     set(value) {
-      field = value.cycledClamp(to = 12)
+      _minutes = value.cycledClamp(to = 60)
+
+      minutesAngle = getMinutesAngle(_minutes)
+
+      invalidateSelf()
+    }
+    get() = _minutes
+
+  var hours: Int
+    set(value) {
+      _hours = value.cycledClamp(to = 12)
+
+      hoursAngle = getHoursAngle(_hours, minutes)
+
+      invalidateSelf()
+    }
+    get() = _hours
+
+  var clockColor = Color.WHITE
+    set(value) {
+      field = value
+
+      frame.color = field
+      pointers.color = field
+
       invalidateSelf()
     }
 
-  var minutes = 0
+  var frameStroke = Stroke.LIGHT
     set(value) {
-      field = value.cycledClamp(to = 60)
+      field = value
+      frame.strokeWidth = field.toDip()
       invalidateSelf()
     }
 
-  private val frame = smoothLinePaint().apply { strokeWidth = ctx.dip(1).toFloat() }
-  private val pointers = smoothLinePaint().apply { strokeWidth = ctx.dip(1).toFloat() }
+  var pointerStroke = Stroke.LIGHT
+    set(value) {
+      field = value
+      pointers.strokeWidth = field.toDip()
+      invalidateSelf()
+    }
 
-  private val hoursAngle: Float
-    get() = 30F * hours.toFloat() + minutes.toFloat() / 2F - 90
+  var indeterminateSpeed = 1F
 
-  private val minutesAngle: Float
-    get() = 6F * minutes.toFloat() - 90
+  private val frame = smoothLinePaint().apply {
+    strokeWidth = frameStroke.toDip()
+    color = clockColor
+  }
+
+  private val pointers = smoothLinePaint().apply {
+    strokeWidth = pointerStroke.toDip()
+    color = clockColor
+  }
 
   private val centerX: Float get() = bounds.exactCenterX()
   private val centerY: Float get() = bounds.exactCenterY()
 
   private val width: Float get() = bounds.width().toFloat()
-  private val height: Float get() = bounds.height().toFloat()
 
   private val frameRadius: Float get() = width / 2 - frame.strokeWidth
-  private val minutesRadius: Float get() = frameRadius - frame.strokeWidth * 3
-  private val hoursRadius: Float get() = frameRadius / 2
+  private val minutesRadius: Float get() = frameRadius * .8F
+  private val hoursRadius: Float get() = frameRadius * .5F
+
+  private var minutesAngle = getMinutesAngle()
+  private var hoursAngle = getHoursAngle()
 
   private var absMinutes: Float = 0F
     set(value) {
@@ -54,6 +100,25 @@ class ClockDrawable(ctx: Context) : Drawable(), Animatable {
       minutes = (field % 60).toInt()
       hours = field.toInt().floorDiv(60)
     }
+
+  private val indeterminateAnimator = ValueAnimator.ofFloat(0F, 1F).apply {
+    repeatMode = ValueAnimator.RESTART
+    repeatCount = ValueAnimator.INFINITE
+
+    addUpdateListener {
+      absMinutes += indeterminateSpeed
+    }
+  }
+
+  private val discreteAnimator = ValueAnimator.ofFloat(0F, 1F).apply {
+    interpolator = OvershootInterpolator()
+    duration = 400L
+  }
+
+  constructor(ctx: Context, stroke: Stroke, color: Int) : this(ctx) {
+    this.frameStroke = stroke
+    this.clockColor = color
+  }
 
   override fun draw(canvas: Canvas?) {
     canvas ?: return
@@ -78,16 +143,48 @@ class ClockDrawable(ctx: Context) : Drawable(), Animatable {
     pointers.colorFilter = filter
   }
 
-  override fun isRunning(): Boolean {
-    TODO()
+  @JvmName("animateToTime")
+  fun animateTo(nextHours: Int, nextMinutes: Int) {
+    _hours = nextHours.cycledClamp(12)
+    _minutes = nextMinutes.cycledClamp(60)
+
+    val beforeHrs = hoursAngle
+    val beforeMins = minutesAngle
+
+    val afterHrs = getHoursAngle(_hours, _minutes)
+    val afterMins = getMinutesAngle(_minutes)
+
+    val diffHrs = afterHrs - hoursAngle
+    val diffMins = afterMins - minutesAngle
+
+    discreteAnimator.apply {
+      addUpdateListener {
+        hoursAngle = beforeHrs + diffHrs * it.animatedFraction
+        minutesAngle = beforeMins + diffMins * it.animatedFraction
+        invalidateSelf()
+      }
+
+      start()
+    }
   }
+
+  override fun isRunning(): Boolean = indeterminateAnimator.isRunning
 
   override fun start() {
-    TODO()
+    absMinutes = (60 * hours + minutes).toFloat()
+    indeterminateAnimator.start()
   }
 
-  override fun stop() {
-    TODO()
-  }
+  override fun stop() = indeterminateAnimator.cancel()
 
+  private fun getHoursAngle(hrs: Int = 0, mins: Int = 0) = 30F * hrs + mins.toFloat() / 2F - 90
+
+  private fun getMinutesAngle(mins: Int = 0) = 6F * mins - 90
+
+  private fun Stroke.toDip() = when (this) {
+    Stroke.THIN -> ctx.dip(1).toFloat()
+    Stroke.LIGHT -> ctx.dip(2).toFloat()
+    Stroke.REGULAR -> ctx.dip(3).toFloat()
+    Stroke.BOLD -> ctx.dip(5).toFloat()
+  }
 }

@@ -1,8 +1,8 @@
 package rm.com.timecon;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
@@ -17,34 +17,29 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     final ImageView clocks = (ImageView) findViewById(R.id.clocks);
-    final ClockDrawable clockDrawable = new ClockDrawable(this);
-
-    clockDrawable.setFrameStroke(Stroke.REGULAR);
-    clockDrawable.setPointerStroke(Stroke.THIN);
+    final ClockDrawable clockDrawable = new ClockDrawable.Builder(this)
+        .hours(10)
+        .minutes(30)
+        .withColor(Color.WHITE)
+        .withPointerStroke(Stroke.THIN)
+        .withDuration(1000)
+        .build();
 
     clocks.setImageDrawable(clockDrawable);
 
-//    clockDrawable.start();
-
-    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+    new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
-        clockDrawable.animateToTime(16, 20);
+        clockDrawable.animateToTime(21, 18);
       }
     }, 2000);
 
-    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+    new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
-        clockDrawable.animateToTime(0, 30);
+        clockDrawable.animateToTime(0, 46);
       }
     }, 4000);
 
-    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        clockDrawable.start();
-      }
-    }, 6000);
   }
 }

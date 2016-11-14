@@ -1,10 +1,12 @@
 package rm.com.clocks
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.view.View
 
 /**
@@ -28,6 +30,9 @@ internal fun smoothLinePaint(paintColor: Int = Color.WHITE): Paint =
       strokeJoin = Paint.Join.ROUND
     }
 
+inline internal fun animatorOf(init: ValueAnimator.() -> Unit) =
+    ValueAnimator.ofFloat(0F, 1F).apply(init)
+
 internal fun Canvas.drawLineWithAngle(fromX: Float, fromY: Float, angleDegrees: Float, length: Float, paint: Paint) {
   val (endX, endY) = angleDegrees.endsOf(fromX, fromY, length)
 
@@ -39,3 +44,6 @@ internal fun Int.withAlpha(alpha: Int): Int {
   return this and 0x00FFFFFF or (alpha shl 24)
 }
 
+internal val Drawable.width: Int get() = bounds.width()
+internal val Drawable.centerX: Float get() = bounds.exactCenterX()
+internal val Drawable.centerY: Float get() = bounds.exactCenterY()

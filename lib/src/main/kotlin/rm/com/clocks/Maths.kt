@@ -4,19 +4,23 @@ package rm.com.clocks
  * Created by alex
  */
 
-fun Int.cycledClamp(to: Int): Int =
+internal fun Int.cycledClamp(to: Int): Int =
     when {
       this >= 0 -> this % to
       else -> to + this % to
     }
 
-fun Int.floorDiv(by: Int): Int = Math.floor(this.toDouble() / by.toDouble()).toInt()
+internal fun Int.floorDiv(by: Int): Int = Math.floor(this.toDouble() / by.toDouble()).toInt()
 
-fun Float.toRad() = Math.toRadians(this.toDouble())
+internal fun Float.toRad() = Math.toRadians(this.toDouble())
 
-fun cosOfDeg(degrees: Float) = Math.cos(degrees.toRad()).toFloat()
+internal fun cosOfDeg(degrees: Float) = Math.cos(degrees.toRad()).toFloat()
 
-fun sinOfDeg(degrees: Float) = Math.sin(degrees.toRad()).toFloat()
+internal fun sinOfDeg(degrees: Float) = Math.sin(degrees.toRad()).toFloat()
 
-fun Float.endsOf(startX: Float, startY: Float, len: Float) =
+internal fun hoursDegOf(hours: Int = 0, minutes: Int = 0) = 30F * hours + minutes.toFloat() / 2F - 90
+
+internal fun minutesDegOf(minutes: Int = 0) = 6F * minutes - 90
+
+internal fun Float.endsOf(startX: Float, startY: Float, len: Float) =
     (len * cosOfDeg(this) + startX) to (len * sinOfDeg(this) + startY)

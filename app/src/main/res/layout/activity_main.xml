@@ -13,10 +13,28 @@
 
 	<rm.com.clocks.ClockImageView
 		android:id="@+id/clocks"
-		android:layout_width="84dp"
-		android:layout_height="84dp"
+		android:layout_width="56dp"
+		android:layout_height="56dp"
 		android:layout_centerInParent="true"
-		app:frameWidth="bold"
+		app:hours="16"
+		app:minutes="20"
+		app:timeSetDuration="400"
+		app:clockColor="#BBFFFFFF"
+		app:indeterminateSpeed="2"
+		app:pointerWidth="thin"
+		app:frameWidth="regular"
+		/>
+
+	<TextView
+		android:id="@+id/clocks_time"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_below="@id/clocks"
+		android:layout_marginTop="12dp"
+		android:textColor="@android:color/white"
+		android:textSize="16sp"
+		android:text="16:20"
 		/>
 
 </RelativeLayout>

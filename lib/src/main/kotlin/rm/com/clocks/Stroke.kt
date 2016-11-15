@@ -14,3 +14,11 @@ internal fun Stroke.toDip(ctx: Context) = when (this) {
   Stroke.REGULAR -> ctx.dip(3).toFloat()
   Stroke.BOLD -> ctx.dip(5).toFloat()
 }
+
+internal fun Int.asStroke() = when (this) {
+  0 -> Stroke.THIN
+  1 -> Stroke.LIGHT
+  2 -> Stroke.REGULAR
+  3 -> Stroke.BOLD
+  else -> Stroke.THIN
+}

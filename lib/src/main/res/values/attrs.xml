@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<declare-styleable name="ClockImageView">
+		<attr name="hours" format="integer" />
+		<attr name="minutes" format="integer" />
+		<attr name="clockColor" format="color" />
+		<attr name="indeterminateSpeed" format="float" />
+		<attr name="hasFrame" format="boolean" />
+		<attr name="frameWidth" format="enum">
+			<enum name="thin" value="0" />
+			<enum name="light" value="1" />
+			<enum name="regular" value="2" />
+			<enum name="bold" value="3" />
+		</attr>
+		<attr name="pointerWidth" format="enum">
+			<enum name="thin" value="0" />
+			<enum name="light" value="1" />
+			<enum name="regular" value="2" />
+			<enum name="bold" value="3" />
+		</attr>
+		<attr name="timeSetDuration" format="integer" />
+	</declare-styleable>
+</resources>

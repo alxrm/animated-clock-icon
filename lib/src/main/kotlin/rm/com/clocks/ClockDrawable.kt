@@ -9,7 +9,7 @@ import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
-import android.view.animation.OvershootInterpolator
+import android.widget.ImageView
 
 /**
  * Created by alex
@@ -19,7 +19,7 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
   private var _minutes = 0
   var minutes: Int
     set(value) {
-      _minutes = value.cycledClamp(to = 60)
+      _minutes = value.cycledClamp(to = COUNT_MINUTES)
       minutesAngle = minutesDegOf(_minutes)
 
       invalidateSelf()
@@ -29,8 +29,8 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
   private var _hours = 0
   var hours: Int
     set(value) {
-      _hours = value.cycledClamp(to = 12)
-      hoursAngle = hoursDegOf(_hours, minutes)
+      _hours = value.cycledClamp(to = COUNT_HOURS)
+      hoursAngle = hoursDegOf(_hours, _minutes)
 
       invalidateSelf()
     }
@@ -55,34 +55,34 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
       invalidateSelf()
     }
 
-  var frameStroke = Stroke.LIGHT
+  var frameWidth = DEFAULT_STROKE
     set(value) {
       field = value
       frame.strokeWidth = field.toDip(ctx)
       invalidateSelf()
     }
 
-  var pointerStroke = Stroke.LIGHT
+  var pointerWidth = DEFAULT_STROKE
     set(value) {
       field = value
       pointers.strokeWidth = field.toDip(ctx)
       invalidateSelf()
     }
 
-  var indeterminateSpeed = 1F
+  var indeterminateSpeed = DEFAULT_SPEED
 
-  var discreteInterpolator: TimeInterpolator = OvershootInterpolator()
+  var timeSetInterpolator: TimeInterpolator = DEFAULT_INTERPOLATOR
     set(value) {
       field = value
 
-      discreteAnimator.interpolator = field
+      timeSetAnimator.interpolator = field
     }
 
-  var discreteDuration = 400L
+  var timeSetDuration = DEFAULT_DURATION
     set(value) {
       field = value
 
-      discreteAnimator.duration = field
+      timeSetAnimator.duration = field
     }
 
   var animationListener: Animator.AnimatorListener? = null
@@ -90,24 +90,24 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
       field = value
 
       field?.let {
-        discreteAnimator.removeAllListeners()
-        discreteAnimator.addListener(it)
+        timeSetAnimator.removeAllListeners()
+        timeSetAnimator.addListener(it)
       }
     }
 
   private val frame = smoothLinePaint().apply {
-    strokeWidth = frameStroke.toDip(ctx)
+    strokeWidth = frameWidth.toDip(ctx)
     color = clockColor
   }
 
   private val pointers = smoothLinePaint().apply {
-    strokeWidth = pointerStroke.toDip(ctx)
+    strokeWidth = pointerWidth.toDip(ctx)
     color = clockColor
   }
 
   private val frameRadius: Float get() = width / 2 - frame.strokeWidth
-  private val minutesRadius: Float get() = frameRadius * .8F
-  private val hoursRadius: Float get() = frameRadius * .5F
+  private val minutesRadius: Float get() = frameRadius * POINTER_FACTOR_MINUTES
+  private val hoursRadius: Float get() = frameRadius * POINTER_FACTOR_HOURS
 
   private var minutesAngle = minutesDegOf()
   private var hoursAngle = hoursDegOf()
@@ -117,8 +117,8 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
     set(value) {
       _absMinutes = value
 
-      minutes = (_absMinutes % 60).toInt()
-      hours = _absMinutes.toInt().floorDiv(60)
+      minutes = (_absMinutes % COUNT_MINUTES).toInt()
+      hours = _absMinutes.toInt().floorDiv(COUNT_MINUTES)
     }
     get() = _absMinutes
 
@@ -131,9 +131,9 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
     }
   }
 
-  private val discreteAnimator = animatorOf {
-    interpolator = discreteInterpolator
-    duration = discreteDuration
+  private val timeSetAnimator = animatorOf {
+    interpolator = timeSetInterpolator
+    duration = timeSetDuration
   }
 
   override fun draw(canvas: Canvas?) {
@@ -163,9 +163,9 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
   fun animateTo(hrs: Int, min: Int) {
     if (isRunning) stop()
 
-    _hours = hrs.cycledClamp(12)
-    _minutes = min.cycledClamp(60)
-    _absMinutes = (60 * _hours + _minutes).toFloat()
+    _hours = hrs.cycledClamp(to = COUNT_HOURS)
+    _minutes = min.cycledClamp(to = COUNT_MINUTES)
+    _absMinutes = (COUNT_MINUTES * _hours + _minutes).toFloat()
 
     val beforeHrs = hoursAngle
     val beforeMins = minutesAngle
@@ -176,7 +176,7 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
     val diffHrs = afterHrs - hoursAngle
     val diffMins = afterMins - minutesAngle
 
-    discreteAnimator.apply {
+    timeSetAnimator.apply {
       addUpdateListener {
         hoursAngle = beforeHrs + diffHrs * it.animatedFraction
         minutesAngle = beforeMins + diffMins * it.animatedFraction
@@ -193,66 +193,82 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
 
   override fun stop() = indeterminateAnimator.cancel()
 
-  class Builder(private val ctx: Context) {
+  companion object {
 
+    @JvmStatic
+    fun builder(ctx: Context): ClockDrawable.Builder {
+      return ClockDrawable.Builder(ctx)
+    }
+  }
+
+  class Builder(private val ctx: Context) {
     private var hours = 0
     private var minutes = 0
     private var color = Color.WHITE
+    private var speed = DEFAULT_SPEED
     private var hasFrame = true
-    private var frameStroke = Stroke.REGULAR
-    private var pointerStroke = Stroke.REGULAR
-    private var duration = 400L
-    private var interpolator: TimeInterpolator = OvershootInterpolator()
+    private var frameWidth = DEFAULT_STROKE
+    private var pointerWidth = DEFAULT_STROKE
+    private var duration = DEFAULT_DURATION
+    private var interpolator: TimeInterpolator = DEFAULT_INTERPOLATOR
     private var listener: Animator.AnimatorListener? = null
 
     private lateinit var clockDrawable: ClockDrawable
 
-    fun hours(hours: Int) = this.apply {
+    fun hours(hours: Int) = apply {
       this.hours = hours
     }
 
-    fun minutes(minutes: Int) = this.apply {
+    fun minutes(minutes: Int) = apply {
       this.minutes = minutes
     }
 
-    fun withColor(color: Int) = this.apply {
+    fun withColor(color: Int) = apply {
       this.color = color
     }
 
-    fun withFrame(with: Boolean) = this.apply {
+    fun withSpeed(speed: Float) = apply {
+      this.speed = speed
+    }
+
+    fun withFrame(with: Boolean) = apply {
       this.hasFrame = with
     }
 
-    fun withFrameStroke(stroke: Stroke) = this.apply {
-      this.frameStroke = stroke
+    fun withFrameWidth(width: Stroke) = apply {
+      this.frameWidth = width
     }
 
-    fun withPointerStroke(stroke: Stroke) = this.apply {
-      this.pointerStroke = stroke
+    fun withPointerWidth(width: Stroke) = apply {
+      this.pointerWidth = width
     }
 
-    fun withDuration(duration: Long) = this.apply {
+    fun withDuration(duration: Long) = apply {
       this.duration = duration
     }
 
-    fun withInterpolator(interpolator: TimeInterpolator) = this.apply {
+    fun withInterpolator(interpolator: TimeInterpolator) = apply {
       this.interpolator = interpolator
     }
 
-    fun withListener(listener: Animator.AnimatorListener) = this.apply {
+    fun withListener(listener: Animator.AnimatorListener) = apply {
       this.listener = listener
     }
+
+    fun into(view: ImageView): ClockDrawable =
+        build().apply { view.setImageDrawable(this) }
 
     fun build(): ClockDrawable {
       this.clockDrawable = ClockDrawable(ctx)
       this.clockDrawable.hours = this.hours
       this.clockDrawable.minutes = this.minutes
       this.clockDrawable.clockColor = this.color
+      this.clockDrawable.indeterminateSpeed = this.speed
       this.clockDrawable.hasFrame = this.hasFrame
-      this.clockDrawable.frameStroke = this.frameStroke
-      this.clockDrawable.pointerStroke = this.pointerStroke
-      this.clockDrawable.discreteDuration = this.duration
-      this.clockDrawable.discreteInterpolator = this.interpolator
+      this.clockDrawable.frameWidth = this.frameWidth
+      this.clockDrawable.pointerWidth = this.pointerWidth
+      this.clockDrawable.timeSetDuration = this.duration
+      this.clockDrawable.timeSetInterpolator = this.interpolator
       this.clockDrawable.animationListener = this.listener
       return this.clockDrawable
     }

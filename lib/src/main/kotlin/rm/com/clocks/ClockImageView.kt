@@ -12,66 +12,65 @@ import android.widget.ImageView
  * Created by alex
  */
 
-class ClockImageView : ImageView, Animatable {
-
+class ClockImageView : ImageView, Clock, Animatable {
   var clock = ClockDrawable(context)
     private set
 
-  var hours: Int
+  override var hours: Int
     get() = clock.hours
     set(value) {
       clock.hours = value
     }
 
-  var minutes: Int
+  override var minutes: Int
     get() = clock.minutes
     set(value) {
       clock.minutes = value
     }
 
-  var clockColor: Int
+  override var clockColor: Int
     get() = clock.clockColor
     set(value) {
       clock.clockColor = value
     }
 
-  var indeterminateSpeed: Float
+  override var indeterminateSpeed: Float
     get() = clock.indeterminateSpeed
     set(value) {
       clock.indeterminateSpeed = value
     }
 
-  var hasFrame: Boolean
+  override var hasFrame: Boolean
     get() = clock.hasFrame
     set(value) {
       clock.hasFrame = value
     }
 
-  var frameWidth: Stroke
+  override var frameWidth: Stroke
     get() = clock.frameWidth
     set(value) {
       clock.frameWidth = value
     }
 
-  var pointerWidth: Stroke
+  override var pointerWidth: Stroke
     get() = clock.pointerWidth
     set(value) {
       clock.pointerWidth = value
     }
 
-  var timeSetDuration: Long
+  override var timeSetDuration: Long
     get() = clock.timeSetDuration
     set(value) {
       clock.timeSetDuration = value
     }
 
-  var timeSetInterpolator: TimeInterpolator
+  override var timeSetInterpolator: TimeInterpolator
     get() = clock.timeSetInterpolator
     set(value) {
       clock.timeSetInterpolator = value
     }
 
-  var animationListener: Animator.AnimatorListener?
+  override var animationListener: Animator.AnimatorListener?
     get() = clock.animationListener
     set(value) {
       clock.animationListener = value
@@ -97,8 +96,9 @@ class ClockImageView : ImageView, Animatable {
     }
   }
 
-  @JvmName(name = "animateToTime")
-  fun animateTo(hours: Int, minutes: Int) = clock.animateTo(hours, minutes)
+  override fun animateToTime(hours: Int, minutes: Int) = clock.animateToTime(hours, minutes)
+
+  override fun animateIndeterminate() = clock.animateIndeterminate()
 
   override fun isRunning() = clock.isRunning
 

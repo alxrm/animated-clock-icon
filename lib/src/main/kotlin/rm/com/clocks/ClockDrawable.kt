@@ -14,10 +14,10 @@ import android.widget.ImageView
 /**
  * Created by alex
  */
-class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
+class ClockDrawable(private val ctx: Context) : Drawable(), Clock, Animatable {
 
   private var _minutes = 0
-  var minutes: Int
+  override var minutes: Int
     set(value) {
       _minutes = value.cycledClamp(to = COUNT_MINUTES)
       minutesAngle = minutesDegOf(_minutes)
@@ -27,7 +27,7 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
     get() = _minutes
 
   private var _hours = 0
-  var hours: Int
+  override var hours: Int
     set(value) {
       _hours = value.cycledClamp(to = COUNT_HOURS)
       hoursAngle = hoursDegOf(_hours, _minutes)
@@ -36,7 +36,7 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
     }
     get() = _hours
 
-  var clockColor = Color.WHITE
+  override var clockColor = Color.WHITE
     set(value) {
       field = value
 
@@ -46,46 +46,43 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
       invalidateSelf()
     }
 
-  /**
-   * defines whether this should draw a ring around the pointers
-   */
-  var hasFrame = true
+  override var hasFrame = true
     set(value) {
       field = value
       invalidateSelf()
     }
 
-  var frameWidth = DEFAULT_STROKE
+  override var frameWidth = DEFAULT_STROKE
     set(value) {
       field = value
       frame.strokeWidth = field.toDip(ctx)
       invalidateSelf()
     }
 
-  var pointerWidth = DEFAULT_STROKE
+  override var pointerWidth = DEFAULT_STROKE
     set(value) {
       field = value
       pointers.strokeWidth = field.toDip(ctx)
       invalidateSelf()
     }
 
-  var indeterminateSpeed = DEFAULT_SPEED
+  override var indeterminateSpeed = DEFAULT_SPEED
 
-  var timeSetInterpolator: TimeInterpolator = DEFAULT_INTERPOLATOR
+  override var timeSetInterpolator: TimeInterpolator = DEFAULT_INTERPOLATOR
     set(value) {
       field = value
 
       timeSetAnimator.interpolator = field
     }
 
-  var timeSetDuration = DEFAULT_DURATION
+  override var timeSetDuration = DEFAULT_DURATION
     set(value) {
       field = value
 
       timeSetAnimator.duration = field
     }
 
-  var animationListener: Animator.AnimatorListener? = null
+  override var animationListener: Animator.AnimatorListener? = null
     set(value) {
       field = value
 
@@ -95,12 +92,12 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
       }
     }
 
-  private val frame = smoothLinePaint().apply {
+  private val frame = linePaintOf().apply {
     strokeWidth = frameWidth.toDip(ctx)
     color = clockColor
   }
 
-  private val pointers = smoothLinePaint().apply {
+  private val pointers = linePaintOf().apply {
     strokeWidth = pointerWidth.toDip(ctx)
     color = clockColor
   }
@@ -159,12 +156,11 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
     pointers.colorFilter = filter
   }
 
-  @JvmName("animateToTime")
-  fun animateTo(hrs: Int, min: Int) {
+  override fun animateToTime(hours: Int, minutes: Int) {
     if (isRunning) stop()
 
-    _hours = hrs.cycledClamp(to = COUNT_HOURS)
-    _minutes = min.cycledClamp(to = COUNT_MINUTES)
+    _hours = hours.cycledClamp(to = COUNT_HOURS)
+    _minutes = minutes.cycledClamp(to = COUNT_MINUTES)
     _absMinutes = (COUNT_MINUTES * _hours + _minutes).toFloat()
 
     val beforeHrs = hoursAngle
@@ -186,6 +182,8 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Animatable {
       start()
     }
   }
+
+  override fun animateIndeterminate() = start()
 
   override fun isRunning(): Boolean = indeterminateAnimator.isRunning
 

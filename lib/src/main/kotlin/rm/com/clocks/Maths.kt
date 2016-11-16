@@ -22,5 +22,6 @@ internal fun hoursDegOf(hours: Int = 0, minutes: Int = 0) = 30F * hours + minute
 
 internal fun minutesDegOf(minutes: Int = 0) = 6F * minutes - 90
 
-internal fun Float.endsOf(startX: Float, startY: Float, len: Float) =
-    (len * cosOfDeg(this) + startX) to (len * sinOfDeg(this) + startY)
+internal fun Float.endXOf(fromX: Float, len: Float) = len * cosOfDeg(this) + fromX
+
+internal fun Float.endYOf(fromY: Float, len: Float) = len * sinOfDeg(this) + fromY

@@ -18,11 +18,12 @@ public class MainActivity extends AppCompatActivity {
     final TextView timeText = (TextView) findViewById(R.id.clocks_time);
 
 //    final ClockDrawable clockDrawable = ClockDrawable.builder(this)
-//        .hours(10)
-//        .minutes(30)
-//        .withColor(Color.WHITE)
-//        .withPointerWidth(Stroke.THIN)
+//        .hours(4)
+//        .minutes(20)
+//        .withSpeed(-2.5F)
+//        .withColor(0xAAFFFFFF)
 //        .withDuration(600)
+//        .withFrameWidth(Stroke.REGULAR)
 //        .into(clocks);
 
     new Handler().postDelayed(new Runnable() {
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void run() {
         timeText.setText("Indeterminate");
-        clocks.start();
+        clocks.animateIndeterminate();
       }
     }, 3000);
 

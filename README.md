@@ -46,7 +46,7 @@ final ClockDrawable clockDrawable = ClockDrawable.builder(this)
     .withDuration(600L)                                         // set animation duration in millis (600L by default)
     .withInterpolator(new DecelerateInterpolator())             // set animation interpolator (default is OverShootInterpolator)
     .withListener(new AnimatorListenerAdapter() {/*...*/})      // set animation listener
-    .into(clocks);                                              // attaches the builded drawable to ImageView and returns Drawable
+    .into(clocks);                                              // attach the Drawable you built to ImageView and returns Drawable
  // .build();                                                      or you can just use build() to simply get Drawable   
 ```
 

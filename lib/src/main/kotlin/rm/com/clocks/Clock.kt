@@ -24,7 +24,8 @@ interface Clock {
   var clockColor: Int
 
   /**
-   * Speed of minutes pointer movement for endless(indeterminate) animation, see [animateIndeterminate]
+   * Speed of minutes pointer movement for endless(indeterminate) animation,
+   * see [animateIndeterminate], default value is [DEFAULT_SPEED]
    *
    * [indeterminateSpeed] can be negative if you need the rewind effect
    * or if you need the effect of "ticking clock" you can set a very small fraction

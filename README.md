@@ -22,7 +22,7 @@ allprojects {
 Add the dependency:
 ```Groovy
 dependencies {
-    compile 'com.github.alxrm:Timecon:1.0.2'
+    compile 'com.github.alxrm:animated-clock-icon:1.0.2'
 }
 ```
 

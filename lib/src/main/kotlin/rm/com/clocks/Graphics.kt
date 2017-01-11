@@ -13,6 +13,7 @@ import android.view.View
  * Created by alex
  */
 internal fun Resources.dip(value: Int): Int = (value * displayMetrics.density).toInt()
+
 internal fun Context.dip(value: Int): Int = resources.dip(value)
 internal fun View.dip(value: Int): Int = resources.dip(value)
 
@@ -32,7 +33,8 @@ internal fun linePaintOf(paintColor: Int = Color.WHITE): Paint =
 inline internal fun animatorOf(init: ValueAnimator.() -> Unit) =
     ValueAnimator.ofFloat(0F, 1F).apply(init)
 
-internal fun Canvas.drawLineWithAngle(fromX: Float, fromY: Float, angleDegrees: Float, length: Float, paint: Paint) {
+internal fun Canvas.drawLineWithAngle(fromX: Float, fromY: Float, angleDegrees: Float,
+    length: Float, paint: Paint) {
   val endX = angleDegrees.endXOf(fromX, length)
   val endY = angleDegrees.endYOf(fromY, length)
 

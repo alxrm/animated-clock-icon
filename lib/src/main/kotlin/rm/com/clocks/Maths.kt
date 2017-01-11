@@ -18,7 +18,8 @@ internal fun cosOfDeg(degrees: Float) = Math.cos(degrees.toRad()).toFloat()
 
 internal fun sinOfDeg(degrees: Float) = Math.sin(degrees.toRad()).toFloat()
 
-internal fun hoursDegOf(hours: Int = 0, minutes: Int = 0) = 30F * hours + minutes.toFloat() / 2F - 90
+internal fun hoursDegOf(hours: Int = 0, minutes: Int = 0) =
+    30F * hours + minutes.toFloat() / 2F - 90
 
 internal fun minutesDegOf(minutes: Int = 0) = 6F * minutes - 90
 

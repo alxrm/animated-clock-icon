@@ -133,9 +133,7 @@ class ClockDrawable(private val ctx: Context) : Drawable(), Clock, Animatable {
     duration = timeSetDuration
   }
 
-  override fun draw(canvas: Canvas?) {
-    canvas ?: return
-
+  override fun draw(canvas: Canvas) {
     if (hasFrame) {
       canvas.drawCircle(centerX, centerY, frameRadius, frame)
     }

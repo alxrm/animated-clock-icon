@@ -80,7 +80,8 @@ class ClockImageView : ImageView, Clock, Animatable {
 
   constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
 
-  constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+  constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs,
+      defStyleAttr) {
     attrs?.let {
       inflateAttrs(attrs)
     }
@@ -118,11 +119,13 @@ class ClockImageView : ImageView, Clock, Animatable {
       hours = getInteger(R.styleable.ClockImageView_hours, hours)
       minutes = getInteger(R.styleable.ClockImageView_minutes, minutes)
       clockColor = getColor(R.styleable.ClockImageView_clockColor, clockColor)
-      indeterminateSpeed = getFloat(R.styleable.ClockImageView_indeterminateSpeed, indeterminateSpeed)
+      indeterminateSpeed = getFloat(R.styleable.ClockImageView_indeterminateSpeed,
+          indeterminateSpeed)
       hasFrame = getBoolean(R.styleable.ClockImageView_hasFrame, hasFrame)
       frameWidth = getInt(R.styleable.ClockImageView_frameWidth, 0).asStroke()
       pointerWidth = getInt(R.styleable.ClockImageView_pointerWidth, 0).asStroke()
-      timeSetDuration = getInteger(R.styleable.ClockImageView_timeSetDuration, timeSetDuration.toInt()).toLong()
+      timeSetDuration = getInteger(R.styleable.ClockImageView_timeSetDuration,
+          timeSetDuration.toInt()).toLong()
       recycle()
     }
   }

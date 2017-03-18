@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="rm.com.timecon.SystemClockActivity"
+    >
+
+  <rm.com.clocks.ClockImageView
+      android:id="@+id/clock_face"
+      android:layout_width="96dp"
+      android:layout_height="96dp"
+      android:layout_centerInParent="true"
+      app:clockColor="#8A000000"
+      app:frameWidth="thin"
+      app:indeterminateSpeed="2"
+      app:pointerWidth="regular"
+      app:timeSetDuration="200"
+      />
+
+</RelativeLayout>

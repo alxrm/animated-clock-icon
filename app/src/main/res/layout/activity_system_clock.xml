@@ -14,10 +14,11 @@
       android:layout_height="96dp"
       android:layout_centerInParent="true"
       app:clockColor="#8A000000"
-      app:frameWidth="thin"
-      app:indeterminateSpeed="2"
-      app:pointerWidth="regular"
-      app:timeSetDuration="200"
+      app:frameWidth="bold"
+      app:hours="0"
+      app:minutes="0"
+      app:pointerWidth="thin"
+      app:timeSetDuration="400"
       />
 
 </RelativeLayout>

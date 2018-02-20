@@ -17,7 +17,7 @@ public final class SystemClockActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_system_clock);
-    viewClockFace = (ClockImageView) findViewById(R.id.clock_face);
+    viewClockFace = findViewById(R.id.clock_face);
   }
 
   @Override protected void onResume() {

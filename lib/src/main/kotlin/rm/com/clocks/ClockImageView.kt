@@ -13,7 +13,7 @@ import android.widget.ImageView
  */
 
 class ClockImageView : ImageView, Clock, Animatable {
-  var clock = ClockDrawable(context)
+  private var clock = ClockDrawable(context)
     private set
 
   override var hours: Int
